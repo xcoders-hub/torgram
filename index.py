@@ -7,6 +7,13 @@ app = Flask(__name__)
 app.secret_key = '767rgdb263tr'
 
 #how to get environment varible values -->  " os.environ['S3_KEY'] "
+aria2 = aria2p.API(
+    aria2p.Client(
+        host="http://localhost",
+        port=6800,
+        secret=""
+    )
+)
 
 @app.route('/run',methods = ['GET'])
 def run():
@@ -24,16 +31,9 @@ def run():
     aria2_daemon_start_cmd.append("--seed-time=1")
     aria2_daemon_start_cmd.append("--split=10")
     aria2_daemon_start_cmd.append("--bt-stop-timeout=600")
-
     subprocess.Popen(aria2_daemon_start_cmd)
     subprocess.call
-    global aria2 = aria2p.API(
-        aria2p.Client(
-            host="http://localhost",
-            port=6800,
-            secret=""
-        )
-    )
+
     # list downloads
     downloads = aria2.get_downloads()
     list1=[]
