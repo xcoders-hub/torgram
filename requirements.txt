@@ -2,3 +2,5 @@ aria2p
 tgcrypto
 flask
 gunicorn
+subprocess
+requests
