@@ -1,0 +1,3 @@
+[console_scripts]
+aria2p=aria2p.cli:main
+

@@ -1,10 +1,7 @@
-import requests
-import os
 import aria2p
 import subprocess
 from flask import Flask, render_template, request, redirect, make_response, session,url_for
 app = Flask(__name__)
-app.secret_key = '767rgdb263tr'
 
 #how to get environment varible values -->  " os.environ['S3_KEY'] "
 
@@ -35,14 +32,14 @@ def run():
             secret=""
         )
     )
-    # list downloads
+
     downloads = aria2.get_downloads()
     list1=[]
     for download in downloads:
         list1.append(download.name)
         list1.append(download.download_speed)
         list1.append("<br>")
-    return list1
+    return str(list1)
 
 @app.route('/',methods = ['GET'])
 def home():
