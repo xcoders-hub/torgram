@@ -4,7 +4,13 @@ from flask import Flask, render_template, request, redirect, make_response, sess
 app = Flask(__name__)
 
 #how to get environment varible values -->  " os.environ['S3_KEY'] "
-
+aria2 = aria2p.API(
+        aria2p.Client(
+            host="http://localhost",
+            port=6800,
+            secret=""
+        )
+    )
 
 @app.route('/run',methods = ['GET'])
 def run():
@@ -25,13 +31,7 @@ def run():
     subprocess.Popen(aria2_daemon_start_cmd)
     subprocess.call
 
-    aria2 = aria2p.API(
-        aria2p.Client(
-            host="http://localhost",
-            port=6800,
-            secret=""
-        )
-    )
+
 
     downloads = aria2.get_downloads()
     list1=[]
@@ -51,7 +51,7 @@ def home():
         list1.append(",")
         list1.append(download.download_speed)
         list1.append("<br>")
-    return list1
+    return str(list1)
 
 @app.route('/download',methods = ['GET'])
 def download():
@@ -69,7 +69,7 @@ def download():
     list2.append(str(file.progress_string()))
     list2.append(",")
     list2.append(str(file.total_length_string()))
-    return list2
+    return str(list2)
 
 
 if __name__ == '__main__':
