@@ -29,53 +29,55 @@ def run():
     aria2_daemon_start_cmd.append("--split=10")
     aria2_daemon_start_cmd.append("--bt-stop-timeout=600")
     aria2_daemon_start_cmd.append("--dir=/app/static/files")
+    #aria2_daemon_start_cmd.append("--dir=/Users/pradeepjangid/torgram/static/files")
     subprocess.Popen(aria2_daemon_start_cmd)
     subprocess.call
 
-
-
-
-    downloads = aria2.get_downloads()
-    list1=[]
-    for download in downloads:
-        list1.append(download.name)
-        list1.append(download.download_speed)
-        list1.append("<br>")
-    return str(list1)
+    #downloads = aria2.get_downloads()
+    #list1=[]
+    #for download in downloads:
+        #list1.append(download.name)
+        #list1.append(download.download_speed)
+        #list1.append("<br>")
+    return True
 
 @app.route('/',methods = ['GET'])
 def home():
     # list downloads
     downloads = aria2.get_downloads()
-    list1=[]
+    opt=''
     for download in downloads:
-        list1.append(download.name)
-        list1.append(",")
-        list1.append(download.download_speed)
-        list1.append("<br>")
-    return str(list1)
+        opt=opt+'Name : '+str(download.name)+'<br>'
+        opt=opt+'D Speed : '+str(download.download_speed)+'<br>'
+        opt=opt+'Total : '+str(download.total_length_string())+'<br>'
+        opt=opt+'Progress : '+str(download.progress_string())+'<br>'
+        opt=opt+'status : '+str(download.status)+'<br>'
+        opt=opt+'ETA : '+str(download.eta_string())+'<br><hr>'
+    return str(opt)
 
 @app.route('/upload',methods = ['GET'])
 def upload():
     return render_template('upload.html')
 
-@app.route('/download',methods = ['GET'])
+@app.route('/add-magnet',methods = ['GET'])
 def download():
     magnet_uri = request.args.get('link')
     gid = aria2.add_magnet(magnet_uri).gid
+    return str(gid)
+
+@app.route('/status',methods = ['GET'])
+def status():
+    gid = request.args.get('gid')
     new_gid=aria2.get_download(gid).followed_by_ids[0]
     file = aria2.get_download(new_gid)
-    list2=[]
-    list2.append(str(file.name))
-    list2.append(",")
-    list2.append(str(file.download_speed_string()))
-    list2.append(",")
-    list2.append(str(file.upload_speed_string()))
-    list2.append(",")
-    list2.append(str(file.progress_string()))
-    list2.append(",")
-    list2.append(str(file.total_length_string()))
-    return str(list2)
+    opt=''
+    opt=opt+'Name: '+str(file.name)+'<br>'
+    opt=opt+'Speed: '+str(file.download_speed_string())+'<br>'
+    opt=opt+'D Speed: '+str(file.download_speed_string())+'<br>'
+    opt=opt+'U Speed: '+str(file.upload_speed_string())+'<br>'
+    opt=opt+'Progress: '+str(file.progress_string())+'<br>'
+    opt=opt+'Total: '+str(file.total_length_string())+'<br>'
+    return opt
 
 @app.route('/drive/<arg>')
 def action(arg):
