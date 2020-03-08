@@ -53,6 +53,10 @@ def home():
         list1.append("<br>")
     return str(list1)
 
+@app.route('/upload',methods = ['GET'])
+def upload():
+    return render_template('upload.html')
+
 @app.route('/download',methods = ['GET'])
 def download():
     magnet_uri = request.args.get('link')
