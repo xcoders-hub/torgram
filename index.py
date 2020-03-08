@@ -28,7 +28,7 @@ def run():
     aria2_daemon_start_cmd.append("--seed-time=1")
     aria2_daemon_start_cmd.append("--split=10")
     aria2_daemon_start_cmd.append("--bt-stop-timeout=600")
-    aria2_daemon_start_cmd.append("--dir=/Users/pradeepjangid/torgram/static/files")
+    aria2_daemon_start_cmd.append("--dir=/app/static/files")
     subprocess.Popen(aria2_daemon_start_cmd)
     subprocess.call
 
