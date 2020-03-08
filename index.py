@@ -1,6 +1,8 @@
 import aria2p
 import subprocess
-from flask import Flask, render_template, request, redirect, make_response, session,url_for
+import http.server
+import socketserver
+from flask import Flask, render_template, request, redirect, make_response, session,url_for,send_from_directory
 app = Flask(__name__)
 
 #how to get environment varible values -->  " os.environ['S3_KEY'] "
@@ -30,6 +32,13 @@ def run():
     aria2_daemon_start_cmd.append("--bt-stop-timeout=600")
     subprocess.Popen(aria2_daemon_start_cmd)
     subprocess.call
+    PORT = 8989
+    Handler = http.server.SimpleHTTPRequestHandler
+
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print("serving at port", PORT)
+        httpd.serve_forever()
+
 
 
 
@@ -74,6 +83,11 @@ def download():
     list2.append(",")
     list2.append(str(file.total_length_string()))
     return str(list2)
+
+@app.route('/<path:path>')
+def static_proxy(path):
+  # send_static_file will guess the correct MIME type
+  return app.send_static_file(path)
 
 
 if __name__ == '__main__':
