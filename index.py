@@ -1,7 +1,5 @@
 import aria2p
 import subprocess
-import http.server
-import socketserver
 from flask import Flask, render_template, request, redirect, make_response, session,url_for,send_from_directory
 app = Flask(__name__)
 
@@ -30,14 +28,9 @@ def run():
     aria2_daemon_start_cmd.append("--seed-time=1")
     aria2_daemon_start_cmd.append("--split=10")
     aria2_daemon_start_cmd.append("--bt-stop-timeout=600")
+    aria2_daemon_start_cmd.append("--dir=/Users/pradeepjangid/torgram/static/files")
     subprocess.Popen(aria2_daemon_start_cmd)
     subprocess.call
-    PORT = 8989
-    Handler = http.server.SimpleHTTPRequestHandler
-
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print("serving at port", PORT)
-        httpd.serve_forever()
 
 
 
@@ -84,10 +77,54 @@ def download():
     list2.append(str(file.total_length_string()))
     return str(list2)
 
-@app.route('/<path:path>')
-def static_proxy(path):
-  # send_static_file will guess the correct MIME type
-  return app.send_static_file(path)
+@app.route('/drive/<arg>')
+def action(arg):
+        arg1=str(arg).replace('|','/')
+        arg=arg+'|'
+        ls1=[]
+        ls2=[]
+        ls3=[]
+        ls4=[]
+        #properties extract i.e folder or file
+        for i in list(subprocess.Popen(["ls","-l","static/files/"+arg1],stdout=subprocess.PIPE).stdout)[1:]:
+            ls1.append(str(i).split("'")[1][0])
+        #seq. me name load from system
+        for i in list(subprocess.Popen(["ls","static/files/"+arg1],stdout=subprocess.PIPE).stdout):
+            ls2.append(str(i).split("'")[1].split("\\n")[0])
+        #diffrent lists of files and folders
+        for i in range(0,len(ls1)):
+            if ls1[i]=='d':
+                ls3.append(ls2[i])
+            elif ls1[i]=='-':
+                ls4.append(ls2[i])
+        arg1=arg1+'/'
+        return render_template('drive.html',list1=ls3,list2=ls4,arg=arg,arg1=arg1)
+
+@app.route('/drive')
+def files():
+    ls1=[]
+    ls2=[]
+    ls3=[]
+    ls4=[]
+    #properties extract i.e folder or file
+    for i in list(subprocess.Popen(["ls","-l","static/files"],stdout=subprocess.PIPE).stdout)[1:]:
+        ls1.append(str(i).split("'")[1][0])
+    #seq. me name load from system
+    for i in list(subprocess.Popen(["ls","static/files"],stdout=subprocess.PIPE).stdout):
+        ls2.append(str(i).split("'")[1].split("\\n")[0])
+    #diffrent lists of files and folders
+    for i in range(0,len(ls1)):
+        if ls1[i]=='d':
+            ls3.append(ls2[i])
+        elif ls1[i]=='-':
+            ls4.append(ls2[i])
+
+
+    return render_template('drive.html',list1=ls3,list2=ls4)
+
+
+
+  #return app.send_static_file(path)
 
 
 if __name__ == '__main__':
