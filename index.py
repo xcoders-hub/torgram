@@ -39,7 +39,7 @@ def run():
         #list1.append(download.name)
         #list1.append(download.download_speed)
         #list1.append("<br>")
-    return True
+    return 'TRUE'
 
 @app.route('/',methods = ['GET'])
 def home():
@@ -48,7 +48,7 @@ def home():
     opt=''
     for download in downloads:
         opt=opt+'Name : '+str(download.name)+'<br>'
-        opt=opt+'D Speed : '+str(download.download_speed)+'<br>'
+        opt=opt+'D Speed : '+str(download.download_speed_string())+'<br>'
         opt=opt+'Total : '+str(download.total_length_string())+'<br>'
         opt=opt+'Progress : '+str(download.progress_string())+'<br>'
         opt=opt+'status : '+str(download.status)+'<br>'
