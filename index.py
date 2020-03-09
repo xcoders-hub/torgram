@@ -143,10 +143,19 @@ def action(arg):
         ls3=[]
         ls4=[]
         #properties extract i.e folder or file
-        for i in list(subprocess.Popen(["ls","-l","static/files/"+arg1],stdout=subprocess.PIPE).stdout)[1:]:
+        tmp1=[]
+        k=subprocess.Popen(["ls","-l","static/files/"+arg1],stdout=subprocess.PIPE).stdout
+        for i in k:
+            tmp1.append(str(i))
+        tmp1=tmp1[1:]
+        for i in tmp1:
             ls1.append(str(i).split("'")[1][0])
         #seq. me name load from system
-        for i in list(subprocess.Popen(["ls","static/files/"+arg1],stdout=subprocess.PIPE).stdout):
+        tmp2=[]
+        k=subprocess.Popen(["ls","static/files/"+arg1],stdout=subprocess.PIPE).stdout
+        for i in k:
+            tmp2.append(str(i))
+        for i in tmp2:
             ls2.append(str(i).split("'")[1].split("\\n")[0])
         #diffrent lists of files and folders
         for i in range(0,len(ls1)):
@@ -163,11 +172,21 @@ def files():
     ls2=[]
     ls3=[]
     ls4=[]
+
     #properties extract i.e folder or file
-    for i in list(subprocess.Popen(["ls","-l","static/files"],stdout=subprocess.PIPE).stdout)[1:]:
+    tmp1=[]
+    k=subprocess.Popen(["ls","-l","static/files"],stdout=subprocess.PIPE).stdout
+    for i in k:
+        tmp1.append(str(i))
+    tmp1=tmp1[1:]
+    for i in tmp1:
         ls1.append(str(i).split("'")[1][0])
     #seq. me name load from system
-    for i in list(subprocess.Popen(["ls","static/files"],stdout=subprocess.PIPE).stdout):
+    tmp2=[]
+    k=subprocess.Popen(["ls","static/files"],stdout=subprocess.PIPE).stdout
+    for i in k:
+        tmp2.append(str(i))
+    for i in tmp2:
         ls2.append(str(i).split("'")[1].split("\\n")[0])
     #diffrent lists of files and folders
     for i in range(0,len(ls1)):
@@ -175,7 +194,6 @@ def files():
             ls3.append(ls2[i])
         elif ls1[i]=='-':
             ls4.append(ls2[i])
-
 
     return render_template('drive.html',list1=ls3,list2=ls4)
 
