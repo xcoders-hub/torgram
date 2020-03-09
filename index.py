@@ -43,6 +43,28 @@ def run():
 
 @app.route('/',methods = ['GET'])
 def home():
+    downloads = aria2.get_downloads()
+    opt=[]
+    for download in downloads:
+        tmp=[]
+        tmp.append(str(download.name))
+        tmp.append(str(download.download_speed_string()))
+        tmp.append(str(download.total_length_string()))
+        tmp.append(str(download.connections))
+        tmp.append(str(download.progress_string()))
+        if str(download.status)=='active':
+            tmp.append('bg-success progress-bar-striped progress-bar-animated')
+        elif str(download.status)=='complete':
+            tmp.append('progress-bar-info')
+        else:
+            tmp.append('bg-danger progress-bar-striped')
+        tmp.append(str(download.eta_string()))
+        tmp.append(str(download.gid))
+        opt.append(tmp)
+    return render_template('index.html',opt=opt)
+
+@app.route('/home',methods = ['GET'])
+def list():
     # list downloads
     downloads = aria2.get_downloads()
     opt=''
@@ -50,10 +72,43 @@ def home():
         opt=opt+'Name : '+str(download.name)+'<br>'
         opt=opt+'D Speed : '+str(download.download_speed_string())+'<br>'
         opt=opt+'Total : '+str(download.total_length_string())+'<br>'
+        opt=opt+'Seeds and peers  : '+str(download.connections)+'<br>'
         opt=opt+'Progress : '+str(download.progress_string())+'<br>'
         opt=opt+'status : '+str(download.status)+'<br>'
         opt=opt+'ETA : '+str(download.eta_string())+'<br><hr>'
     return str(opt)
+
+
+@app.route('/pause',methods = ['GET'])
+def pause():
+    gid = request.args.get('gid')
+    tmp = aria2.get_download(gid)
+    if tmp.status=='paused':
+        return 'False'
+    else:
+        tmp.pause()
+        return 'True'
+
+@app.route('/resume',methods = ['GET'])
+def resume():
+    gid = request.args.get('gid')
+    tmp = aria2.get_download(gid)
+    if tmp.status=='active':
+        return 'False'
+    else:
+        tmp.resume()
+        return 'True'
+
+@app.route('/stop',methods = ['GET'])
+def stop():
+    gid = request.args.get('gid')
+    tmp = aria2.get_download(gid)
+    if tmp.status=='active' or 'paused':
+        tmp.remove()
+        return 'True'
+    else:
+        return 'False'
+
 
 @app.route('/upload',methods = ['GET'])
 def upload():
@@ -61,7 +116,7 @@ def upload():
 
 @app.route('/add-magnet',methods = ['GET'])
 def download():
-    magnet_uri = request.args.get('link')
+    magnet_uri = request.args.get('mag-link')
     gid = aria2.add_magnet(magnet_uri).gid
     return str(gid)
 
